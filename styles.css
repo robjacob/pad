@@ -1,0 +1,103 @@
+body {
+	text-align: justify;
+	font-family: arial, sans-serif;
+	font-size: 11pt;
+	color: black;
+}
+
+.pad {
+	font-size: 16pt;
+	font-weight: bold;
+}
+
+h1 {
+	color: saddlebrown;
+}
+
+.namecurrent {
+	color: black;
+}
+
+/* Buttons and pulldowns */
+
+.current {
+	color: saddlebrown;
+	background: beige;
+	border: beige;
+	height: 80px;
+	width: 250px;
+	font-size: 16pt;
+	text-align: center;
+}
+
+.noncurrent {
+	color: saddlebrown;
+	background: beige;
+	border: beige;
+	width: 250px;
+	text-align: center;
+}
+
+/* Bookmark list = White with fine grey lines like message list in ios Mail or Mac Os Mail */
+
+.bookmarkhr {
+	color: #ddd;
+	background-color: #ddd;
+	height: 1px;
+	border: 0;
+}
+
+.barchart { 
+	float: left;
+	margin: 5px 10px 5px 10px; /* = top right bottom left */
+	color: saddlebrown;
+}
+
+.baroutline {
+	stroke: saddlebrown;
+	fill: white;
+}
+
+.bar {
+	stroke: saddlebrown;
+	fill: red;
+}
+
+.thumb { 
+	float: left;
+	margin: 5px 10px 5px 10px; /* = top right bottom left */
+}
+
+.title {
+	font-size: 14pt;
+	font-weight: bold;
+	color: black;
+}
+
+.time {
+	font-size: 11pt;
+	color: grey;
+}
+
+.url {
+	font-size: 12pt;
+	color: black;
+}
+
+.selection {
+	font-size: 11pt;
+	color: grey;
+}
+
+/* Sliders */
+
+.sliders {
+	background: beige;
+	border: 1px solid saddlebrown;
+	width: 400px;
+}
+
+.slider {
+	-webkit-appearance: slider-vertical;
+	width: 60px;
+}

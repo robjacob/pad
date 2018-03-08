@@ -1,0 +1,56 @@
+<html>
+<!-- See ./pad.js for documentation -->
+<head>
+
+<!-- NB applescript called by pad.js relies on text of this title -->
+<title>Front end</title>
+
+<link rel="stylesheet" type="text/css" href="styles.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.4.0/moment.min.js"></script>
+<script src="front.js"></script>
+</head>
+
+<body>
+<h1>Brain Scratchpad Prototype</h1>
+<hr/>
+
+<input type=button class="current" value="View" onclick="view()" >
+<br/>
+
+<br/><br/>
+
+<input type=button class="current" value="Save" onclick="save ()">
+<br/>
+
+<br/><hr/>
+
+<div id="bookmarks"></div>
+<br/><hr/>
+  
+<!-- hidden template node, some of our classnames are used by the javascript code -->
+<div id="bookmark" style="visibility: hidden;">
+  <hr class="bookmarkhr"/>
+  <svg class="barchart" width="15" height="60" alt="Bar chart" xmlns="http://www.w3.org/2000/svg">
+  	<!-- "60" herein also appears in front.js -->
+	<rect class="baroutline" x="0" y="0" width="15" height="60" />
+	<rect class="bar" x="0" y="0" width="15" height="0" />
+  </svg>
+  <img class="thumb" alt="Thumbnail" />
+  <span class="title"></span><br/>
+  <span class="time"></span><br/>
+  <span class="url"></span><br/>
+  <span class="selection"></span><br/>
+</div>
+
+<h1>Simulated Brain Input</h1>
+<div class="sliders">
+  <input class="slider" type="range" min="0" max="100" value="0" onmouseup="brain ()" >
+  <input class="slider" type="range" min="0" max="100" value="0" onmouseup="brain ()" >
+  <input class="slider" type="range" min="0" max="100" value="0" onmouseup="brain ()" >
+  <input class="slider" type="range" min="0" max="100" value="0" onmouseup="brain ()" >
+  <input class="slider" type="range" min="0" max="100" value="0" onmouseup="brain ()" >
+</div>
+
+</body>
+</html>
