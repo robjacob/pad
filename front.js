@@ -1,9 +1,11 @@
+"use strict";
+
 var PORTNUM = "10099"
 
-// Common subroutine, take json dump of list of bookmarks and display
+// Common shared subroutine, take json dump of a list of bookmarks and display them
 function displayPad (jsonObj) {
-	// Remove any children under id=bookmarks node
-	bookmarkshtml = document.getElementById('bookmarks')
+	// Remove any previous children under the id=bookmarks node
+	var bookmarkshtml = document.getElementById('bookmarks')
 	while (bookmarkshtml.hasChildNodes()) {
 		bookmarkshtml.removeChild(bookmarkshtml.lastChild);
 	}
@@ -11,7 +13,7 @@ function displayPad (jsonObj) {
 	// Make a new child for each bookmark
 	jsonObj.forEach (function (b) {
 		// Clone an html subtree for this bookmark
-		bhtml = document.getElementById('bookmark').cloneNode(true); // true = deep copy
+		var bhtml = document.getElementById('bookmark').cloneNode(true); // true = deep copy
 
 		// Populate the new html subtree.
 		// These particular classnames are
@@ -22,10 +24,10 @@ function displayPad (jsonObj) {
 		bhtml.getElementsByClassName("url")[0].innerHTML = b.url;
 		bhtml.getElementsByClassName("selection")[0].innerHTML = b.selection;
 		if (b.thumb != null) bhtml.getElementsByClassName("thumb")[0].src = b.thumb;
-		rect = bhtml.getElementsByClassName("bar")[0]
+		var rect = bhtml.getElementsByClassName("bar")[0]
 		rect.y.baseVal.value = 60*(1.-b.interest); // This "60" also appears in front.html
 		rect.height.baseVal.value = 60*b.interest;
-		bhtml.style.visibility="visible";
+		bhtml.style.display="inline";
 
 		// Add it under id=bookmarks node
 		bookmarkshtml.appendChild(bhtml);

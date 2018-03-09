@@ -1,3 +1,5 @@
+"use strict";
+
 var http = require("http");
 var url = require("url");
 var net = require("net")
@@ -42,7 +44,7 @@ var brainclient = net.createConnection (BRAINPORTNUM)
 brainclient.setEncoding("UTF8");
 
 brainclient.addListener ("error", function() {
-	console.log("Brain Client: Cant connect, use slider");
+	console.log("Brainclient: can't connect, use on-screen sliders to simulate");
 	brainclient.end ();
 });
 

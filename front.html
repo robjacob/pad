@@ -1,5 +1,5 @@
 <html>
-<!-- See ./pad.js for documentation -->
+<!-- See README for documentation -->
 <head>
 
 <!-- NB applescript called by pad.js relies on text of this title -->
@@ -15,21 +15,20 @@
 <h1>Brain Scratchpad Prototype</h1>
 <hr/>
 
-<input type=button class="current" value="View" onclick="view()" >
+<input type=button class="button" value="View" onclick="view()" >
 <br/>
 
-<br/><br/>
+<br/>
 
-<input type=button class="current" value="Save" onclick="save ()">
+<input type=button class="button" value="Save" onclick="save ()">
 <br/>
 
 <br/><hr/>
 
 <div id="bookmarks"></div>
-<br/><hr/>
-  
+
 <!-- hidden template node, some of our classnames are used by the javascript code -->
-<div id="bookmark" style="visibility: hidden;">
+<div id="bookmark" style="display: none;">
   <hr class="bookmarkhr"/>
   <svg class="barchart" width="15" height="60" alt="Bar chart" xmlns="http://www.w3.org/2000/svg">
   	<!-- "60" herein also appears in front.js -->
@@ -42,6 +41,8 @@
   <span class="url"></span><br/>
   <span class="selection"></span><br/>
 </div>
+
+<hr/><br/>
 
 <h1>Simulated Brain Input</h1>
 <div class="sliders">

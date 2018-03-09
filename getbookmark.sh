@@ -2,7 +2,7 @@
 # We do it in one script here, rather than separate calls
 # so we can do our stuff synchronously
 
-# We return the items, each on a separate line
+# We return the items, each on a separate line;
 # selection is optional, starts at 4th line and may continue beyond
 
 # Fetch URL from applescript

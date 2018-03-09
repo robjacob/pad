@@ -12,29 +12,18 @@ body {
 
 h1 {
 	color: saddlebrown;
-}
-
-.namecurrent {
-	color: black;
+	font-size: 18pt;
 }
 
 /* Buttons and pulldowns */
 
-.current {
+.button {
 	color: saddlebrown;
 	background: beige;
 	border: beige;
-	height: 80px;
-	width: 250px;
-	font-size: 16pt;
-	text-align: center;
-}
-
-.noncurrent {
-	color: saddlebrown;
-	background: beige;
-	border: beige;
-	width: 250px;
+	height: 60px;
+	width: 150px;
+	font-size: 14pt;
 	text-align: center;
 }
 
@@ -69,8 +58,7 @@ h1 {
 }
 
 .title {
-	font-size: 14pt;
-	font-weight: bold;
+	font-size: 13pt;
 	color: black;
 }
 
@@ -80,7 +68,7 @@ h1 {
 }
 
 .url {
-	font-size: 12pt;
+	font-size: 11pt;
 	color: black;
 }
 
