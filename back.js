@@ -44,7 +44,7 @@ var brainclient = net.createConnection (BRAINPORTNUM)
 brainclient.setEncoding("UTF8");
 
 brainclient.addListener ("error", function() {
-	console.log("Brainclient: can't connect, use on-screen sliders to simulate");
+	console.log("Brainclient: Use on-screen sliders to simulate instead");
 	brainclient.end ();
 });
 

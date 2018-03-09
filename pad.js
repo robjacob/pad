@@ -12,15 +12,10 @@
 
 var child_process = require ('child_process')
 
-// For choosing how many items to retrieve
-// Units are square of Euclidean distance
-const RADIUSNEAR = .1 // Very close, always show all items within this radius
-const RADIUSFAR = .2 // Less close, never show items further than this
-const NTOPCHOICES = 5
-
 /*
  * Object to hold a single brain/body state reading
  * (a point in the feature space), holds raw features, no classifier.
+ * Sort of assume each feature is 0..1
  */
 class StatePoint {
     // Arg is an array of numbers
@@ -66,42 +61,19 @@ class Bookmark {
 
 	// We set this one ourselves
 	this.time = new Date();
+
+	// Distance to currentState at the moment
+	// Is temp variable, will keep changing as currentState changes
+	this.dist = 0
+    }
+
+    // Update because currentState may have changed
+    updateDist () {
+	this.dist = this.statePoint.dist(currentState)
     }
 }
 
 var allBookmarks = []
-
-// A separate function just for clarity, called by doRequest below
-// Returns list of (best) candidates for user to View
-function chooseBookmarks () {
-	// candidates = list of bookmarks within RADIUSFAR from currentState
-	var candidates = []
-	allBookmarks.forEach (function (b) {
-		var dist = b.statePoint.dist(currentState)
-		if (dist < RADIUSFAR) {
-			candidates.push ( {dist: dist, bookmark: b} )
-		}
-	})
-
-	// sort it by distance
-	candidates.sort(function (a,b) {return a.dist - b.dist})
-
-	// 1. Take all bookmarks within RADIUSNEAR
-	// 2. And if <NTOPCHOICES, take the top NTOPCHOICES items within RADIUSFAR
-	// and always order the displayed items by distance,
-	// (they are already sorted in candidates[] )
-	if (candidates.length < NTOPCHOICES) {
-		return candidates
-	}
-	else if (candidates[NTOPCHOICES].dist < RADIUSNEAR) {
-		var last = candidates.findIndex (function (c) { return c.dist >= RADIUSNEAR })
-		if (last == -1) return candidates
-		else return candidates.slice (0, last)
-	}
-	else {
-		return candidates.slice (0, NTOPCHOICES)
-	}
-}
 
 // Call from our server
 function doRequest (params) {
@@ -129,12 +101,17 @@ function doRequest (params) {
 	}
 
 	// "view"
-	// Show bookmarks relevant to current state
+	// Show bookmarks for user to view
 	// No args
-	// Return json struct of entire relevant subset of bookmarks
+	// Return json struct of all bookmarks, sorted by distance to current state
 	else if (params["action"]=="view") {
-		return JSON.stringify (chooseBookmarks ().map(
-			function (item) {return item.bookmark}))
+		// First update the distances
+		allBookmarks.forEach (function (b) { b.updateDist() })
+
+		// sort by distance
+		allBookmarks.sort(function (a,b) {return a.dist - b.dist})
+
+		return JSON.stringify (allBookmarks)
 	}
 
 	// "save"
@@ -224,49 +201,43 @@ if (require.main === module) {
 
 	doRequest ({action: "brain", state: "11,22,33,44,55" })
 	console.log (currentState, currentInterest)
+	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
+	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
 
 	doRequest ({action: "brain", state: "40,22,33,44,55" })
 	console.log (currentState, currentInterest)
+	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
+	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
 
 	doRequest ({action: "brain", state: "60,22,33,44,55" })
 	console.log (currentState, currentInterest)
+	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
+	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
+	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
+	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
 
 	doRequest ({action: "brain", state: "80,22,33,44,55" })
 	console.log (currentState, currentInterest)
+	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
+	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
 
+	doRequest ({action: "brain", state: "40,22,33,44,55" })
+	console.log (currentState, currentInterest)
 	doRequest ({action: "view" })
 
-	console.log (allBookmarks.length)
-	doRequest ({action: "save" })
-	// console.log (allBookmarks.length, allBookmarks)
+	doRequest ({action: "brain", state: "11,22,33,44,55" })
+	console.log (currentState, currentInterest)
+	doRequest ({action: "view" })
 
-	// Temporary testing
-	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
-	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
-	currentState = new StatePoint ([.11, .22, .33, .44, .551])
-	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
-	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
-	currentState = new StatePoint ([.11, .22, .33, .44, .555])
-	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
-	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
-	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
-	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
-	currentState = new StatePoint ([.11, .22, .33, .44, 123])
-	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
-	allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/papers\n", "Rob Jacob Papers\n", null, null))
-	currentState = new StatePoint ([.11, .22, .33, .44, .55])
-
-	currentState = new StatePoint ([0, 0, 0, 0, 0])
+	doRequest ({action: "brain", state: "40,22,33,44,55" })
     	doRequest ({action: "save" })
     	doRequest ({action: "save" })
     	doRequest ({action: "save" })
     	doRequest ({action: "save" })
     	doRequest ({action: "view" })
 
-	var c = chooseBookmarks()
-	console.log (c.length, allBookmarks.length)
-	console.log (JSON.stringify(c.map(
-		function(item) {
-	            return item.bookmark})))
+	var b = chooseBookmarks()
+	console.log (b.length, allBookmarks.length)
+	console.log (JSON.stringify(b))
 	// console.log (allBookmarks)
 }

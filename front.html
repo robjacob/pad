@@ -28,18 +28,20 @@
 <div id="bookmarks"></div>
 
 <!-- hidden template node, some of our classnames are used by the javascript code -->
-<div id="bookmark" style="display: none;">
-  <hr class="bookmarkhr"/>
-  <svg class="barchart" width="15" height="60" alt="Bar chart" xmlns="http://www.w3.org/2000/svg">
+<div id="bookmark" style="display: none">
+  <div class="bookmarkBackground">
+    <svg class="barchart" width="15" height="60" alt="Bar chart" xmlns="http://www.w3.org/2000/svg">
   	<!-- "60" herein also appears in front.js -->
 	<rect class="baroutline" x="0" y="0" width="15" height="60" />
 	<rect class="bar" x="0" y="0" width="15" height="0" />
-  </svg>
-  <img class="thumb" alt="Thumbnail" />
-  <span class="title"></span><br/>
-  <span class="time"></span><br/>
-  <span class="url"></span><br/>
-  <span class="selection"></span><br/>
+    </svg>
+    <img class="thumb" alt="Thumbnail" />
+    <span class="title"></span><br/>
+    <span class="time"></span><br/>
+    <span class="url"></span><br/>
+    <span class="selection"></span><br/>
+    <hr class="bookmarkhr"/>
+  </div>
 </div>
 
 <hr/><br/>

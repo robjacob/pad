@@ -22,10 +22,9 @@ The selection by brain state applies to both input and output:
 which scratchpad it goes to.
 
 * View: When you request information, brain determines
-which scratchpad(s) you get, ie the ones associated
+ordering of which scratchpad(s) you get, ie the ones associated
 with similar (nearest neighbor) states to your current
-state.  [Or maybe it just determines which ones stay
-more prominent in the periphery.]
+state.
 
 Maybe the choice of peripheral window is based on spatial
 versus verbal or some other category like that
@@ -53,7 +52,7 @@ Have some explicit index terms for the scratchpads, eg 5:
 
 ### View:
 
-Press View button = displays the scratchpads that are near
+Press View button = displays the scratchpads ordered by distance
 to current brain state. 
 
 Avoid biofeedback effect, where the 2 peripheral windows
@@ -92,9 +91,14 @@ Save each bookmark along with its raw data, no classifier
 
 ### Retrieve:
 
-Must be within RADIUSFAR otherwise forget it.
+Display *all* the items, ordered by distance,
+and maybe shaded based on their distance.
 
-And, even if there are many, want ALL entries that are
+Or something like:
+
+* Must be within RADIUSFAR otherwise forget it.
+
+* And, even if there are many, want ALL entries that are
 very close (ie within RADIUSNEAR), so I don't lose something I
 thought I filed
 
@@ -212,8 +216,6 @@ where ACTION = brain, view, save
 See inline documentation in pad.js for details of each of the actions
 
 ## Things to Add
-
-Choose the const parameters in pad.js
 
 Show real brain state on GUI (via sliders or otherwise):
 Problem is to send new data to browser unsolicited
