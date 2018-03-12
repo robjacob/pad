@@ -1,11 +1,6 @@
 #!/bin/sh
 # Start up this system
 
-# This file is not really necessary, all you need to do is:
-#	node back.js
-#	Open a Safari window on ./front.html
-#	Open another Safari window for regular browsing
-
 cmd="node back.js"
 
 case $HOSTTYPE in
