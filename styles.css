@@ -15,7 +15,7 @@ h1 {
 	font-size: 18pt;
 }
 
-/* Buttons and pulldowns */
+/* Buttons */
 
 .button {
 	color: saddlebrown;
@@ -25,6 +25,10 @@ h1 {
 	width: 150px;
 	font-size: 14pt;
 	text-align: center;
+}
+
+#startButton {
+	color: red;
 }
 
 /* Bookmark list = White with fine grey lines like message list in ios Mail or Mac Os Mail */

@@ -8,6 +8,7 @@
 <link rel="stylesheet" type="text/css" href="styles.css">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.4.0/moment.min.js"></script>
+<script src="pad.js"></script>
 <script src="front.js"></script>
 </head>
 
@@ -15,12 +16,18 @@
 <h1>Brain Scratchpad Prototype</h1>
 <hr/>
 
-<input type=button class="button" value="View" onclick="view()" >
+<div class="startButtonArea">
+  <input type=button class="button" id="startButton" value="Press to start" onclick="startCB ()" >
+  <br/>
+  <br/>
+</div>
+
+<input type=button class="button" value="View" onclick="viewCB ()" >
 <br/>
 
 <br/>
 
-<input type=button class="button" value="Save" onclick="save ()">
+<input type=button class="button" value="Save" onclick="saveCB ()">
 <br/>
 
 <br/><hr/>
@@ -29,7 +36,7 @@
 
 <!-- hidden template node, some of our classnames are used by the javascript code -->
 <div id="bookmark" style="display: none">
-  <div class="bookmarkBackground">
+  <div class="bookmarkBackground" onclick="bookmarkCB(this)">
     <svg class="barchart" width="15" height="60" alt="Bar chart" xmlns="http://www.w3.org/2000/svg">
   	<!-- "60" herein also appears in front.js -->
 	<rect class="baroutline" x="0" y="0" width="15" height="60" />
@@ -48,11 +55,11 @@
 
 <h1>Simulated Brain Input</h1>
 <div class="sliders">
-  <input class="slider" type="range" min="0" max="100" value="0" onmouseup="brain ()" >
-  <input class="slider" type="range" min="0" max="100" value="0" onmouseup="brain ()" >
-  <input class="slider" type="range" min="0" max="100" value="0" onmouseup="brain ()" >
-  <input class="slider" type="range" min="0" max="100" value="0" onmouseup="brain ()" >
-  <input class="slider" type="range" min="0" max="100" value="0" onmouseup="brain ()" >
+  <input class="slider" type="range" min="0" max="100" value="0">
+  <input class="slider" type="range" min="0" max="100" value="0">
+  <input class="slider" type="range" min="0" max="100" value="0">
+  <input class="slider" type="range" min="0" max="100" value="0">
+  <input class="slider" type="range" min="0" max="100" value="0">
 </div>
 
 </body>

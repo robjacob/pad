@@ -1,30 +1,40 @@
+/*
+ * Does things we need that you can't do in a browser easily,
+ * ie read on a port from the brain server code.
+ * We read the data and hold it, we only return it when you ask us for it via xmlhttp
+ */
+
 "use strict";
 
 var http = require("http");
 var url = require("url");
 var net = require("net")
 
-var pad = require("./pad")
+// Port from front.js
+const PORTNUM = "10099"
 
-var PORTNUM = "10099"
+// Port from our matlab server code, matches existing matlab code
+const BRAINPORTNUM = 10009 
 
+var lineToSend = ""
+
+/*
+ * Set up to handle xmlhttp requests from front.js
+ */
 function start(portnum) {
 	function onRequest(request, response) {
 		console.log("Server: Handling request: " + request.url);
 		
-		var query = url.parse(request.url).query;
-		var vars = query.split('&');
-		var params = new Array;
-		vars.forEach (function (value) {
-			var pair = value.split('=');
-			params[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1])
-		})
+		// Parse request
+		if (url.parse(request.url).query.endsWith ("brain")) {
+			// Handle the request here synchronously
+			response.writeHead (200, {"Content-Type": "text/plain"});
+			response.writeHead (200, {"Access-Control-Allow-Origin": '*'});
 
-		response.writeHead (200, {"Content-Type": "text/plain"});
-		response.writeHead (200, {"Access-Control-Allow-Origin": '*'});
-		// Just handle doRequest synchronously
-		response.write (pad.doRequest(params));
-		response.end ();
+			// Send our latest line of data
+			response.write (lineToSend);
+			response.end ();
+		}
 	}
 
 	http.createServer(onRequest).listen(portnum);
@@ -34,10 +44,9 @@ function start(portnum) {
 start (PORTNUM)
 
 /*
- * Put brain client code here instead of a separate file
+ * This reads from brain server, stashes data,
+ * and returns it upon xmlhttp request above.
  */
-
-var BRAINPORTNUM = 10009  // Matches existing matlab code
 
 var brainclient = net.createConnection (BRAINPORTNUM)
 
@@ -45,6 +54,7 @@ brainclient.setEncoding("UTF8");
 
 brainclient.addListener ("error", function() {
 	console.log("Brainclient: Use on-screen sliders to simulate instead");
+	// NB lineToSend will forever stay at its initial value in this case
 	brainclient.end ();
 });
 
@@ -53,29 +63,7 @@ brainclient.addListener ("connect", function() {
 });
 
 brainclient.addListener ("data", function(data) {
-	// Read everything available, and send each line individually
-	// Blithely assume each read will contain an integer number of lines
-	lines = data.toString().split ("\n")
-	for (iline in lines) {
-		line = lines[iline].trim();
-		if (line!="") {
-			console.log ("Brain Client: " + line);
-			pad.doBrain (line);
-		}
-	}
+	// Read everything available, and save only the last line for sending
+	// Blithely assume each read will contain an integer number of lines, no fragments
+	lineToSend = data.toString().trim().split ("\n").slice(-1)[0]
 });
-
-/*
- * Tests
-if (require.main === module) {
-	pad.doRequest ({action: "brain", state: "10,20,30,40,50," })
-	pad.doRequest ({action: "brain", state: "10,20,30,40,50," })
-	pad.doRequest ({action: "brain", state: "11,20,30,40,50," })
-	pad.doRequest ({action: "brain", state: "12,20,30,40,50," })
-	pad.doRequest ({action: "brain", state: "80,20,30,40,50," })
-
-	pad.doBrain (".4, 0, 0, 0, 0")
-	pad.doBrain (".4, .55, 0, 0, 0")
-}
- */
-
