@@ -51,25 +51,6 @@ or display first.
 Press View button = displays the bookmarks ordered by distance
 to current brain state. 
 
-Avoid biofeedback effect, where the 2 peripheral windows
-keep swapping as brain state changes. Maybe it's very subtle.
-(*)Or it only shows up when you try to bookmark something.
-
-Brain state never causes us to mess with the main window.
-
-### Save:
-
-Press Save button = saves with
-the current brain state and (unimplemented) current interest level.
-
-And the auxiliary display reorders itself
-
-### Nearest neighbor approach:
-
-Save each bookmark along with its raw data, no classifier
-
-### Retrieve:
-
 Display *all* the items, ordered by distance,
 and shaded based on their distance.
 
@@ -80,6 +61,22 @@ Alternately, could truncate the list something like:
 * And, even if there are many, want ALL entries that are
 very close (ie within RADIUSNEAR), so I don't lose something I
 thought I filed
+
+Avoid biofeedback effect, where the 2 peripheral windows
+keep swapping as brain state changes. Maybe it's very subtle.
+(*)Or it only shows up when you try to bookmark something.
+
+Brain state never causes us to mess with the main window.
+
+### Save:
+
+Press Save button = saves with
+the current brain state and (placeholder) current interest level.
+
+And the auxiliary display reorders itself
+
+Nearest neighbor approach:
+Save each bookmark along with its raw data, no classifier
 
 ## UI Implementation
 
@@ -93,7 +90,9 @@ Bookmark window =
 
 * Bookmarks display
 
-Sliders window = like other prototypes, not intended to be in final system
+* Sliders window = like other prototypes, not intended to be in final system
+
+    * Also shows brain state back to the user
 
 Bookmarks display
 
@@ -101,7 +100,7 @@ Bookmarks display
 
 * If you click a bookmark it sends main browser there
 
-* If you select a region, we save that (along
+* If you select a text region, we save that (along
 with URL of the page it was on), otherwise we just save the
 URL.
 
@@ -113,7 +112,9 @@ View
 
 ## Usage
 
-Usage:  Run startup.sh on command line
+Close all your existing browser windows
+
+Run startup.sh on command line
 
 or just manually do:
 
@@ -132,12 +133,12 @@ Safari's Develop menu
 
 * Should work with different browsers on Mac: 
 
-    * change the applescript fragments in pad.js
+    * Change the shell scripts getbookmark.sh and sendbookmark.sh
 
 * Should work on windows:
 
-    * if you replace the applescript
-fragments in pad.js with powerscript or other code that will
+    * Replace the shell scripts getbookmark.sh and sendbookmark.sh
+with powerscript or other code that will
 perform the same tasks
 
 ## Code Files
@@ -145,26 +146,46 @@ perform the same tasks
 ### front.html
 
 What you should open in your browser, calls front.js and styles.css.
-Handles the callbacks from the HTML page -- by communicating
-with back.js.
 
-### back.js
+### front.js
 
-Runs backend server, listens for calls from front.js,
-and sends some of them to pad.js to do the work. Mainly deals with http.
-Also contains code for communicating with brain program that gets brain data (that may be out of date with respect to current code in the lab).
+Main program, provides the widget callbacks for front.html
+
+* Calls pad.js for help
+
+* Calls back.js via xmlhttp for help
 
 ### pad.js
 
-Main code, maintains bookmark lists, etc.
-Runs as the backend (using node.js) part of the system holds the data base of bookmarks.
-Is generally passive, waits for calls.
+Part of front.js that
+holds and manipulates the data base of bookmarks.
+
+### back.js
+
+Runs as the backend (using node.js), listens for calls from front.js.
+
+Does things we need that you can't do in a browser easily, i.e.:
+
+* Get bookmark data from browser
+
+* Send URL to browser
+
+* Read on a port from the brain server code.
+
+Mainly deals with http related overhead.
 Also applescript calls probably all have to be made from this side.
+Also contains code for communicating with brain program that gets brain data (that may be out of date with respect to current code in the lab).
+Is generally passive, waits for calls.
 
 ### getbookmark.sh
 
-Script to collects data needed for making a bookmark from browser and OS.
-The code is specific to MacOs and Safari, but could provide substitute code for a different OS here, also see notes on compatibility above.
+Shell script to collects data needed for making a bookmark from browser and OS.
+The code is specific to Mac OS and Safari, but could provide substitute code for a different OS here, also see notes on compatibility above.
+
+### sendbookmark.sh
+
+Shell script to send a URL (given as single command line arg) to our browser window.
+The code is specific to Mac OS and Safari, but could provide substitute code for a different OS here, also see notes on compatibility above.
 
 ### startup.sh
 
@@ -172,8 +193,9 @@ Simple shell script to start up the programs, not really necessary, see above
 
 ### URL Syntax:
 
-Our URL syntax: http://localhost:10099/?action=ACTION&state=123&pad=123
+Our URL syntax for xmlhttp calls: http://localhost:10099/?QUERY
 
-where ACTION = brain, view, save
+where QUERY = getbookmark, brain, or sendbookmark&URLYOUWANT
+(in future could use proper syntax like ?foo=bar&fie=baz; also may need
+to escape URLYOUWANT)
 
-See inline documentation in pad.js for details of each of the actions

@@ -3,12 +3,13 @@
 # See README.md
 
 case $HOSTTYPE in
-pc)	# Windows/cygwin version, not tested
+pc)	# Windows/cygwin version, not fully implemented, see README.md
 
-	echo This is tested for Windows yet
+	echo This is not fully implemented for Windows yet
 
 	(sleep 2
 
+	start http://www.tufts.edu
 	start front.html
 
 	) &
@@ -32,6 +33,9 @@ pc)	# Windows/cygwin version, not tested
 
 		--For now, just manually make sure all other Safari windows are closed, not sure why this fails: tell (every document whose name is not "Front end") to close
 		set the bounds of the front window to {0, 30, 450, 700}
+
+		make new document with properties {URL:"http://www.tufts.edu"}
+		set the bounds of the front window to {460, 30, 1200, 700}
 	end tell'
 
 	) &

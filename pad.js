@@ -1,5 +1,5 @@
 /*
- * Holds and manipulates the data base of bookmarks.
+ * Holds and manipulates the brain state and the data base of bookmarks
  */
 
 "use strict";
@@ -26,10 +26,19 @@ class StatePoint {
 }
 
 class Bookmark {
-    constructor (url, title) {
+    constructor (url, title, thumb, selection) {
 	this.url = url;
 	this.title = title;
 	
+	// Specific selection if applicable (vice just save URL)
+	// text or null
+	this.selection = selection
+
+	// Filename (temporary file) of thumbnail
+	// or placeholder dummy file
+	if (thumb) this.thumb = thumb
+	else this.thumb = "dummy.png"
+
 	// Brain/body state measurement to be associated with this bookmark
 	// We assume you have called updateBrain() recently before this
 	this.statePoint = currentState;
@@ -54,16 +63,19 @@ class Bookmark {
     }
 }
 
-// Latest measurements, i.e., what we would act upon
+// Latest measurement, i.e., what we would act upon
 var currentState = new StatePoint ([0, 0, 0, 0, 0])
+
+// Ditto, but just a placeholder for now
 var currentInterest = 0.5
 
+// The main list
 var allBookmarks = []
 
 // Some miscellaneous initialization to start us up
-allBookmarks.push (new Bookmark ("http://www.tufts.edu/", "Tufts University"))
+allBookmarks.push (new Bookmark ("http://www.tufts.edu/", "Tufts University", null, null))
 currentState = new StatePoint ([.4, 0, 0, 0, 0])
-allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/", "Rob Jacob Home Page"))
+allBookmarks.push (new Bookmark ("http://www.cs.tufts.edu/~jacob/", "Rob Jacob Home Page", null, null))
 currentState = new StatePoint ([.8, 0, 0, 0, 0])
-allBookmarks.push (new Bookmark ("http://www.tufts.edu/home/visiting_directions/", "Visiting, Maps & Directions - Tufts University"))
+allBookmarks.push (new Bookmark ("http://www.tufts.edu/home/visiting_directions/", "Visiting, Maps & Directions - Tufts University", null, null))
 currentState = new StatePoint ([0, 0, 0, 0, 0])

@@ -1,43 +1,34 @@
+/*
+ * Main program, provides the widget callbacks for front.html
+ * Calls pad.js for help
+ * Calls back.js via xmlhttp for help
+ */
+
 "use strict";
 
 const PORTNUM = "10099"
 
-// The browser window where you do your real browsing
-var otherWindow
-
-/*
- * Start up
- * must put this here not in onload()
- * because javascript only lets you call window.open() from a user action
- */
-function startCB (button) {
-	updateBrain()
-
-	// Open up our second window, the one for actual browsing
-	// Would like to set it to "left=460, top=30, width=600, height=680
-	// but doing so seems to prevent my other options, mainly location
-	otherWindow = window.open ("http://www.tufts.edu", "",
-				   "resizable=yes, scrollbars=yes, status=yes, toolbar=no, location=yes, personalbar=yes, titlebar=yes")
-
-	// You'll never need this button again
-	document.getElementsByClassName("startButtonArea")[0].style.display="none"
-}
-
 /*
  * Button callback
  * Save current page in allBookmarks
+ *
+ * Calling view() at the end is no use because child process
+ * probably didn't finish yet, for solution, see ../pad1
  */
 function saveCB () {
 	updateBrain ()
 
-	var url = otherWindow.location.href
-	var title = otherWindow.document.getElementsByTagName("title")[0].innerHTML
+	doXML ("getbookmark", function (responseText) {
+		// Parse the returned data
+		var url = responseText.split("\n")[0]
+		var title = responseText.split("\n")[1]
+		var tempfilename = responseText.split("\n")[2]
+		var selection = responseText.split("\n").slice(3).reduce (function (a,b) { return a + "\n" + b; }, "")
+		if (selection.trim() == "") selection = null;
 
-	// Save the bookmark (using current state)
-	allBookmarks.push (new Bookmark (url, title))
-
-	// Redisplay the bookmark list (optional)
-	viewCB ();
+		// Save a bookmark (using current state)
+		allBookmarks.push (new Bookmark (url, title, tempfilename, selection))
+	})
 }
 
 /*
@@ -51,25 +42,12 @@ function viewCB () {
 	// First update the distances (must updateBrain() first)
 	allBookmarks.forEach (function (b) { b.updateDist() })
 
-	// sort by distance
+	// Sort by distance
 	allBookmarks.sort(function (a,b) {return a.dist - b.dist})
 
-	displayPad (allBookmarks)
-}
-
-/*
- * Callback if you click on a bookmark in the bookmarks list.
- * arg = the "bookmarkBackground" HTML div
- */
-function bookmarkCB (div) {
-	otherWindow.location.href = div.getElementsByClassName("url")[0].innerHTML
-}
-
-// Common subroutine, take json dump of a list of bookmarks and display them
-function displayPad (jsonObj) {
 	// Calculate max distance^2 for shading
 	var maxDist = 0
-	jsonObj.forEach (function(b) { if (b.dist>maxDist) maxDist = b.dist })
+	allBookmarks.forEach (function(b) { if (b.dist>maxDist) maxDist = b.dist })
 	
 	// Remove any previous children under the id=bookmarks node
 	var bookmarkshtml = document.getElementById('bookmarks')
@@ -78,7 +56,7 @@ function displayPad (jsonObj) {
 	}
 
 	// Make a new child for each bookmark
-	jsonObj.forEach (function (b) {
+	allBookmarks.forEach (function (b) {
 		// Clone an html subtree for this bookmark
 		var bhtml = document.getElementById('bookmark').cloneNode(true); // true = deep copy
 
@@ -89,6 +67,8 @@ function displayPad (jsonObj) {
 		bhtml.getElementsByClassName("title")[0].innerHTML = b.title;
 		bhtml.getElementsByClassName("time")[0].innerHTML = moment (b.time).fromNow();
 		bhtml.getElementsByClassName("url")[0].innerHTML = b.url;
+		bhtml.getElementsByClassName("selection")[0].innerHTML = b.selection;
+		if (b.thumb != null) bhtml.getElementsByClassName("thumb")[0].src = b.thumb;
 
 		// Shading based on distance squared,
 		// want "decrement" from pure white when you hit maxDist
@@ -102,11 +82,20 @@ function displayPad (jsonObj) {
 		rect.y.baseVal.value = 60*(1.-b.interest); // This "60" also appears in front.html
 		rect.height.baseVal.value = 60*b.interest;
 
+		// Make it not invisible
 		bhtml.style.display="inline";
 
 		// Add it under id=bookmarks node
 		bookmarkshtml.appendChild(bhtml);
 	})
+}
+
+/*
+ * Callback if you click on a bookmark in the bookmarks list.
+ * arg = the "bookmarkBackground" HTML div
+ */
+function bookmarkCB (div) {
+	doXML ("sendbookmark&" + div.getElementsByClassName("url")[0].innerHTML, null)
 }
 
 /* 
@@ -119,29 +108,53 @@ function displayPad (jsonObj) {
  * and update our currentState from that
  */
 function updateBrain () {
+	doXML ("brain", function (response) {
+		var tokens = response.trim().split (",")
+
+		if (response == "") {
+			// This will happen if we're using sliders instead
+			currentState = new StatePoint (Array.from (document.getElementsByClassName("slider"))
+				.map (function (s) { return s.value/100.0 }))
+		}
+		else if (tokens.length < 1) {
+			console.error ("updateBrain: can't parse input : " + response);
+		}
+		else {
+			currentState = new StatePoint (
+				tokens.map (function (t) { return parseFloat (t) }))
+
+			// Optional: display it back to user via the sliders
+			Array.from (document.getElementsByClassName("slider")).
+				forEach (function (s, index) { s.value = 100 * currentState.data[index] })
+		}
+
+		// Placeholder, intend to be getting this from physio or other sensor
+		currentInterest = Math.random()
+	})
+}
+
+/*
+ * Shared common subroutine, sends an xmlhttp request,
+ * calls your callback with the xmlhttp response text as its arg.
+ *
+ * We can't return anything useful because our xmlhttp call is
+ * happening later, asynchronously.
+ */
+function doXML (request, callback) {
 	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function () {
+
+	if (callback==null) xmlhttp.onreadystatechange = function () { };
+	else xmlhttp.onreadystatechange = function () {
 		if (xmlhttp.readyState==4) {
-			var response = xmlhttp.responseText
-			var tokens = response.trim().split (",")
-
-			if (response == "") {
-				// Will happen if we're using sliders instead
-				currentState = new StatePoint (Array.from (document.getElementsByClassName("slider"))
-					.map (function (s) { return s.value/100.0 }))
-			}
-			else if (tokens.length < 1) {
-				console.error ("updateBrain: can't parse input : " + response);
-			}
-			else {
-				currentState = new StatePoint (
-					tokens.map (function (t) { return parseFloat (t) }))
-			}
-
-			// Placeholder, intend to be getting this from physio or other sensor
-			currentInterest = Math.random()
+			callback (xmlhttp.responseText)
 		}
 	}
-	xmlhttp.open ("GET", "http://localhost:" + PORTNUM + "?brain", true);
+
+	xmlhttp.open ("GET", "http://localhost:" + PORTNUM + "?" + request, true);
 	xmlhttp.send (null);
 }
+
+window.onload = function () {
+	updateBrain()
+}
+
