@@ -108,7 +108,7 @@ View
 
 * Displays all (or nearby) bookmarks whenever you hit View
 
-* Continuously update as brain state changes?
+* Continuously update as brain state changes (could provide UI control to toggle this on and off)
 
 ## Usage
 
@@ -157,7 +157,7 @@ Main program, provides the widget callbacks for front.html
 
 ### pad.js
 
-Part of front.js that
+Part of frontend that
 holds and manipulates the data base of bookmarks.
 
 ### back.js
