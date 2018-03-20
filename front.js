@@ -24,7 +24,7 @@ function saveCB () {
 			var url = responseText.split("\n")[0]
 			var title = responseText.split("\n")[1]
 			var tempfilename = responseText.split("\n")[2]
-			var selection = responseText.split("\n").slice(3).reduce (function (a,b) { return a + "\n" + b; }, "")
+			var selection = responseText.split("\n").slice(3).reduce (function (a,b) { return a + "\n" + b; }, "").slice (0, 200)
 			if (selection.trim() == "") selection = null;
 
 			// Save a bookmark (using current state)
@@ -44,6 +44,22 @@ function saveCB () {
  */
 function viewCB () {
 	updateBrain (viewAll)
+}
+
+/*
+ * Checkbox callback
+ * Toggle continuous (ie on timer) view refresh
+ */
+function continuousCB (checkbox) {
+	var viewButton = document.getElementById("viewButton")
+	if (checkbox.checked) {
+		timer = setInterval (viewCB, 1000);
+		viewButton.style.display = "none";
+	}
+	else {
+		clearInterval (timer)
+		viewButton.style.display = "inline";
+	}
 }
 
 /*
@@ -177,9 +193,10 @@ function doXML (request, callback) {
 	xmlhttp.send (null);
 }
 
+// Global so continuousCB can turn it off
+var timer = null;
+
 window.onload = function () {
 	viewCB ()
-
-	// This is optional, could provide a UI toggle to turn it on and off
-	setInterval (viewCB, 1000);
+	timer = setInterval (viewCB, 1000);
 }

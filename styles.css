@@ -15,16 +15,22 @@ h1 {
 	font-size: 18pt;
 }
 
-/* Buttons */
+/* Buttons, checkbox*/
 
 .button {
 	color: saddlebrown;
 	background: beige;
 	border: beige;
 	height: 60px;
-	width: 150px;
+	width: 130px;
 	font-size: 14pt;
 	text-align: center;
+}
+
+.checkbox {
+	color: saddlebrown;
+	background: beige;
+	border: beige;
 }
 
 /* Bookmark list = White with fine grey lines like message list in ios Mail or Mac Os Mail */

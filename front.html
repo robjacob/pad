@@ -16,13 +16,12 @@
 <h1>Brain Scratchpad Prototype</h1>
 <hr/>
 
-<input type=button class="button" value="View" onclick="viewCB ()" >
-<br/>
+<input type="button" class="button" id="viewButton" style="display: none" value="View" onclick="viewCB ()" >
 
-<br/>
+<input type="button" class="button" value="Save" onclick="saveCB ()">
 
-<input type=button class="button" value="Save" onclick="saveCB ()">
-<br/>
+<br/><br/>
+<input type="checkbox" class="checkbox" checked="true" value="Continuous" onchange="continuousCB (this)"><span class="checkbox">Update continuously<br></span>
 
 <br/><hr/>
 
