@@ -1,5 +1,7 @@
 # Multi-state Scratchpad Prototype
 
+## Coming soon: A simple non-browser python version of this
+
 ## Conceptual Design
 
 You have a list of bookmarks
